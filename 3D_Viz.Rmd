@@ -68,6 +68,7 @@ plot3d(pca_3d,col = labels_frame$color, size = 5, xlim = c(min(pca_3d$V1),max(pc
 
 <table border="2" style="width:50%" align="left">
   <caption><font color="#000000">Legend : Scroll to Zoom, Click and drag to rotate</font></caption>
+
 <tr>
   <td bgcolor="#E41A1C" align="center"><font color="#FFFFFF">Setosa</font></td>
   <td bgcolor="#0066ff" align="center"><font color="#FFFFFF">Veriscolor</font></td>
@@ -85,14 +86,16 @@ type = "s"
 size = 0.95
 zoom = 0.65
 next3d()
-plot3d(lda_3d,col = labels_frame$color, size = size ,type = type)
+plot3d(pca_3d,col = labels_frame$color, size = size ,type = type)
 rgl.viewpoint(zoom = zoom)
+title3d("PCA")
 
 next3d()
 padding = 0.1
 
 #Was having issues with Box Parameters on 2nd plot. Had to manually define each one.
-plot3d(pca_3d,col = labels_frame$color, size = size,type = type, xlim = c(min(pca_3d$V1),max(pca_3d$V1)) + padding, ylim = c(min(pca_3d$V2),max(pca_3d$V2))+ padding, zlim = c(min(pca_3d$V3),max(pca_3d$V3))+ padding)
+plot3d(lda_3d,col = labels_frame$color, size = size,type = type, xlim = c(min(lda_3d$V1),max(lda_3d$V1)) + padding, ylim = c(min(lda_3d$V2),max(lda_3d$V2))+ padding, zlim = c(min(lda_3d$V3),max(lda_3d$V3))+ padding)
 rgl.viewpoint(zoom = zoom)
+title3d("LDA")
 
 ```
