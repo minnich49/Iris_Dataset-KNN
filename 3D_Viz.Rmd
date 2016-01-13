@@ -1,0 +1,98 @@
+---
+title: "Iris-Data Exploration"
+author: "Bob Minnich"
+date: "January 13, 2016"
+output: html_document
+---
+
+Visualize IRIS data set in 3D using Principal Component Analysis and Linear Discriminant Analysis calculated from Python
+```{r, message=F, warning=F}
+library(bpca)
+library(rgl)
+library(ggfortify)
+library(ggplot2)
+library(RColorBrewer)
+library(knitr)
+library(rglwidget)
+knit_hooks$set(webgl = hook_webgl)
+
+setwd("/Users/bobminnich/Documents/Github/Ipython-Notebooks")
+df = as.data.frame(read.csv("iris.data", header = FALSE, sep = ","))
+
+```
+
+```{r}
+pca_scores = as.data.frame(read.csv("pca_scores.csv", header = FALSE, sep = ","))
+pca_3d = pca_scores[,1:3]
+lda_scores = as.data.frame(read.csv("lda_scores.csv", header = FALSE, sep = ","))
+lda_3d = lda_scores[,1:3]
+
+iris_labels = as.data.frame(read.csv("total_scale_y.csv", header = FALSE, sep = ","))
+#2 = Iris-virginica
+#1 = Iris-versicolor
+#0 = Iris-setosa
+```
+
+
+
+```{r}
+colorpal = c("#E41A1C", "#0066ff", "#4DAF4A")
+
+#Find colors associtated with labels and apply the color palet
+labels = c(0,1,2)
+label_names = c("virginica","versicolor", "setosa")
+labels_frame <- as.data.frame(df[,5])
+labels_frame <- setNames(iris_labels, c("Category"))
+labels_frame$color = "Label Color"
+labels_frame$label = "Label Name"
+
+for(i in 1:3){
+  labels_frame$color[labels_frame$Category == labels[i]] = colorpal[i]
+  labels_frame$label[labels_frame$Category == labels[i]] = label_names[i]
+}
+```
+
+
+```{r eval = FALSE}
+open3d()
+mfrow3d(1, 2, sharedMouse = TRUE)
+
+next3d()
+plot3d(lda_3d,col = labels_frame$color, size = 5)
+next3d()
+padding = 0.1
+
+#Was having issues with Box Parameters on 2nd plot. Had to manually define each one.
+plot3d(pca_3d,col = labels_frame$color, size = 5, xlim = c(min(pca_3d$V1),max(pca_3d$V1)) + padding, ylim = c(min(pca_3d$V2),max(pca_3d$V2))+ padding, zlim = c(min(pca_3d$V3),max(pca_3d$V3))+ padding)
+```
+
+<table border="2" style="width:50%" align="left">
+  <caption><font color="#000000">Legend : Scroll to Zoom, Click and drag to rotate</font></caption>
+<tr>
+  <td bgcolor="#E41A1C" align="center"><font color="#FFFFFF">Setosa</font></td>
+  <td bgcolor="#0066ff" align="center"><font color="#FFFFFF">Veriscolor</font></td>
+  <td bgcolor="#4DAF4A" align="center"><font color="#FFFFFF">Virginica</font></td>
+</tr>
+</table>
+
+```{r testgl2, webgl=TRUE, echo = FALSE,  Eval = TRUE, message= FALSE, results="hide", fig.align='center'}
+open3d()
+mfrow3d(1, 2, sharedMouse = TRUE)
+#mat <- matrix(c(1,2),1,2)
+#layout3d(mat, height = rep(c(1, 1), 2), sharedMouse = TRUE)
+
+type = "s"
+size = 0.95
+zoom = 0.65
+next3d()
+plot3d(lda_3d,col = labels_frame$color, size = size ,type = type)
+rgl.viewpoint(zoom = zoom)
+
+next3d()
+padding = 0.1
+
+#Was having issues with Box Parameters on 2nd plot. Had to manually define each one.
+plot3d(pca_3d,col = labels_frame$color, size = size,type = type, xlim = c(min(pca_3d$V1),max(pca_3d$V1)) + padding, ylim = c(min(pca_3d$V2),max(pca_3d$V2))+ padding, zlim = c(min(pca_3d$V3),max(pca_3d$V3))+ padding)
+rgl.viewpoint(zoom = zoom)
+
+```
